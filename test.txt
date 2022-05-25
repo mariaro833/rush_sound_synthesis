@@ -1,0 +1,12 @@
+
+#instruments: sine, saw, square, triangle
+tempo<5>
+tracks<sine>,tracks<saw>,tracks<square>,tracks<triangle>
+1:a/100 a#/100 b/100 c#/100
+2:a5/100 a#/100 b/100 c#/200
+3:d/100 e#5/100 f/100 g#/100 r
+4:a/100 a#5/100 b/100 c#/100
+5:e/100 e#5/100 f/100 g#/100
+6:e/100 e#5/100 f/100 g#/100
+7:e/100 e#5/100 b/100 c#/100
+8:c#3/50 c d e
