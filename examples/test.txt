@@ -1,6 +1,6 @@
 
 #instruments: sine, saw, square, triangle
-tempo<5>
+tempo 5
 tracks<sine>,tracks<saw>,tracks<square>,tracks<triangle>
 1:a/100 a#/100 b/100 c#/100
 2:a5/100 a#/100 b/100 c#/200
