@@ -22,20 +22,21 @@ filin.close()
 #  track == every tracks is list
 track = []
 test = []
+keypresses = []
 for line in tracks:
 	note = line.split()
 	track.append(note)
-for notes in track:
-    for note in notes:
-        test.append(note.split('/'))
-notes_short = np.delete(notes, 0, 0)
+# for notes1 in track:
+#     for note in notes1:
+#         test.append(note.split('/'))
+notes_short = np.delete(track[0], 0, 0)
 for play_note in notes_short:
-    keypresses = play_note.split('/')
-#     duration = float(keypresses[1])
-# for index in range(len(keypresses)):
-#     try:
-#         keypresses[index] = int(keypresses[index])
-#     except ValueError:
-#         pass
+    keypresses.append(play_note.split('/'))
+    # duration = float(keypresses[1])
+if 
+print("keypresses: ")
 print(keypresses)
+# print("duration: ")
 # print(duration)
+print("track: ")
+print(track)
