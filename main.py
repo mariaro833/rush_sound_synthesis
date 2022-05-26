@@ -1,7 +1,9 @@
 import sys
 import array as arr
 
-song = input('Enter the path of your song: ')
+if len(sys.argv) > 2 or len(sys.argv) == 1:
+	print("Usage: ./minsynth <filename>")
+song = str(sys.argv[1])
 tracks = []
 with open(song, 'r') as filin:
 	for line in filin:
