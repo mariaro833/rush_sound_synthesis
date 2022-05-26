@@ -35,23 +35,27 @@ for i in range(len(noteslist)):
 
     notes[key] = [freq, sample]
     notes[key][1].set_volume(0.33)
-    freq = freq * 2 ** (1/12)
+    # tryineg to add a silence
+    if 'r' in key:
+        freq = 24
+    else:
+        freq = freq * 2 ** (1/12)
 
-# open and pars file
+# open and parse a file
 if len(sys.argv) > 2 or len(sys.argv) == 1:
-	print("Usage: ./minsynth <filename>")
+    print("Usage: ./minsynth <filename>")
 song = str(sys.argv[1])
 tracks = []
 with open(song, 'r') as filin:
-	for line in filin:
-		if 'tempo' in line:
-			tempo = [int(temp) for temp in line.split() if temp.isdigit()]
-			if tempo == 0 :
-				print("Didn't found any tempo")
-				sys.exit
-		if ord(line[0]) >= 48 and ord(line[0]) <= 57:
-			if ':' in line:
-				tracks.append(line)
+    for line in filin:
+        if 'tempo' in line:
+            tempo = [int(temp) for temp in line.split() if temp.isdigit()]
+            if tempo == 0 :
+                print("Didn't found any tempo")
+                sys.exit
+        if ord(line[0]) >= 48 and ord(line[0]) <= 57:
+            if ':' in line:
+                tracks.append(line)
 filin.close()
 # tracks == List of all tracks
 #  track == every tracks is list
@@ -59,8 +63,8 @@ track = []
 test = []
 keypresses = []
 for line in tracks:
-	note = line.split()
-	track.append(note)
+    note = line.split()
+    track.append(note)
 notes_short = np.delete(track[0], 0, 0)
 for play_note in notes_short:
     keypresses.append(play_note.split('/'))
@@ -73,13 +77,14 @@ for i in range(len(keypresses)):
     for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
             running = False
-
     key = keypresses[i][0]
+    print("key: ")
     print(key)
-
+    # if 'r' in keypresses[i][0]:
+    #     notes[key][0] = 0
     notes[key][1].play()
     pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
-    print(int((60000 * float(keypresses[i][1])) / tempo[0]))
+    # print(int((60000 * float(keypresses[i][1])) / tempo[0]))
     notes[key][1].fadeout(0)
 
 pg.time.wait(500)
