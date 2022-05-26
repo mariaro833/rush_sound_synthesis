@@ -1,7 +1,7 @@
 import pygame as pg
 import numpy as np
 
-def synth(frequency, duration=2, sampling_rate=44100):
+def synth(frequency, duration=3, sampling_rate=44100):
     frames = int(duration*sampling_rate)
     arr = np.cos(2*np.pi*frequency*np.linspace(0, duration, frames))
     arr = arr + np.cos(4*np.pi*frequency*np.linspace(0, duration, frames)) # organ like
@@ -46,8 +46,12 @@ for i in range(len(noteslist)):
     screen.blit(font2.render(notes[key][4], 0, notes[key][3]), notes[key][2])
     pg.display.update()
 
+tracks = {}
 with open("SuperMario.txt", "r") as file:
     keypresses = [eval(line.rstrip()) for line in file]
+    tracks[1] = keypresses
+    tracks[2] = keypresses
+    print (tracks[1][1][1])
 file.close()
 
 running = 1
@@ -59,11 +63,11 @@ for i in range(len(keypresses)):
             running = False
 
     key = keypresses[i][1]
-    pg.time.wait(1000)
+    pg.time.wait(800)
     # pg.time.wait(keypresses[i][2])
     if keypresses[i][0]:
-        notes[key][1].play()
-        notes[keypresses[i + 10][1]][1].play()
+        notes[key][1].play(1, 0, 100)
+        # notes[keypresses[i + 10][1]][1].play()
         screen.blit(font2.render(notes[key][4], 0, (255,255,255)), notes[key][2])
     else:
         # notes[key][1].fadeout(100)
