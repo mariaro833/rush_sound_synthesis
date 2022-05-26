@@ -33,7 +33,6 @@ notes_short = np.delete(track[0], 0, 0)
 for play_note in notes_short:
     keypresses.append(play_note.split('/'))
     # duration = float(keypresses[1])
-if 
 print("keypresses: ")
 print(keypresses)
 # print("duration: ")
