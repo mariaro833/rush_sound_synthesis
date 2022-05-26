@@ -29,6 +29,7 @@ notes = {}
 posx, posy = 25, 25 #start position
 freq = 16.3516 #starting frequency
 
+# save gamma in wave
 for i in range(len(noteslist)):
     mod = int(i/36)
     key = noteslist[i]
@@ -63,10 +64,9 @@ for i in range(len(keypresses)):
     if keypresses[i][0]:
         notes[key][1].play()
         notes[keypresses[i + 10][1]][1].play()
-
         screen.blit(font2.render(notes[key][4], 0, (255,255,255)), notes[key][2])
     else:
-        notes[key][1].fadeout(100)
+        # notes[key][1].fadeout(100)
         screen.blit(font2.render(notes[key][4], 0, notes[key][3]), notes[key][2])
 
     pg.display.update()
