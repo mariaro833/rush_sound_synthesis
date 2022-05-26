@@ -6,9 +6,7 @@ from pyparsing import line_end
 song = input('Enter the path of your song: ')
 with open(song, 'r') as filin:
 	for line in filin:
-		if line[0] == '#':
-			continue
-		if line == '\n':
+		if line[0] == '#' or line == '\n':
 			continue
 		if 'tempo' in line:
 			# temp variables
@@ -18,16 +16,9 @@ with open(song, 'r') as filin:
 			# instrments arrange
 			instruments = (re.split('\W+|,', line))
 			print (instruments[25])
+		if line[0] == '#' or line == '\n':
+			continue
+		
+
 filin.close()
 sys.exit
-
-# words_with_numbers = []
-
-# f = open('file.txt', 'r')
-# for line in f:
-#   line = line.strip()
-#   words = line.split(' ')
-#   for w in words:
-#     if any(c.isdigit() for c in w):
-#       words_with_numbers.append(w)
-# f.close()
