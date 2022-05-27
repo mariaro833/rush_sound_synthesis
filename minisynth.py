@@ -8,18 +8,21 @@ import re
 # sample generater
 
 def synth(frequency, duration=3, sampling_rate=44100):
-    frames = int(duration*sampling_rate)
-    arr = np.cos(2*np.pi*frequency*np.linspace(0, duration, frames)) #sine
+    frames = int(duration * sampling_rate)
+    arr = np.cos(2 * np.pi * frequency * np.linspace(0, duration, frames)) #sine
     # arr = arr + np.cos(4*np.pi*frequency*np.linspace(0, duration, frames)) # organ like
     # arr = arr + np.cos(6*np.pi*frequency*np.linspace(0, duration, frames)) # organ like
 ##    arr = np.clip(arr*10, -1, 1) # square
 ##    arr = np.cumsum(np.clip(arr*10, -1, 1)) # saw
-##    arr = arr+np.sin(2*np.pi*frequency*np.linspace(0,duration, frames)) # triangularish waves pt1
+##    arr = arr+np.sin(2*np.pi*frequency*np.linspace(0,duration, frames)) # triangle_nice
     arr = arr/max(np.abs(arr)) # triangle
-    sound = np.asarray([32767*arr,32767*arr]).T.astype(np.int16)
+    sound = np.asarray([32767 * arr,32767 * arr]).T.astype(np.int16)
     sound = pg.sndarray.make_sound(sound.copy())
 
     return sound
+
+#-----------------------------------
+# save the notelist into a wave
 
 pg.init()
 pg.mixer.init()
@@ -31,13 +34,11 @@ keymod = '0-='
 notes = {}
 freq = 16.3516 #starting frequency
 
-#-----------------------------------
-# save the notelist into a wave
-
 for i in range(len(noteslist)):
     mod = int(i/36)
     key = noteslist[i]
     sample = synth(freq)
+    instrument = {}
 
     notes[key] = [freq, sample]
     notes[key][1].set_volume(0.33)
@@ -91,10 +92,10 @@ for n_track in dict_tracks_0:
     list_of_notes = track.split()
     for i in range(len(list_of_notes)):
         note_dur = list_of_notes[i].split('/')
-        if len(note_dur) == 1: # случай например если note_dur = ['r']
+        if len(note_dur) == 1:
             list_of_notes[i] = note_dur
         else:
-            if len(note_dur[1]) == 0: # например если note_dur = ['r', '']
+            if len(note_dur[1]) == 0:
                 list_of_notes[i] = [note_dur[0]]
             else:
                 list_of_notes[i] = note_dur
@@ -132,6 +133,8 @@ for i in range(len(keypresses)):
     key = keypresses[i][0]
     print("key: ")
     print(key)
+    
+    #-----------------------------------
     # checker for silent 'r'
     if not 'r' in keypresses[i][0]:
         notes[key][1].play()
