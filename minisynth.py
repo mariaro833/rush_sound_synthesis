@@ -41,7 +41,8 @@ for i in range(len(noteslist)):
 # open and parse a file
 if len(sys.argv) > 2 or len(sys.argv) == 1:
     print("Usage: ./minsynth <filename>")
-song = str(sys.argv[1])
+# song = str(sys.argv[1])
+song = "Imperial_March.synth"
 tracks = []
 with open(song, 'r') as filin:
     for line in filin:
@@ -53,26 +54,86 @@ with open(song, 'r') as filin:
         if ord(line[0]) >= 48 and ord(line[0]) <= 57:
             if ':' in line:
                 tracks.append(line)
+        if 'tracks' in line:
+            instruments = line[7:].split(',')
 filin.close()
+
+#-----------------------------------
+# if there are equal number of tracks
+
+dict_tracks_instruments = dict()
+dict_tracks_0 = dict()
+number_of_tracks = len(tracks)
+
+
+for i in range(number_of_tracks):
+    track_i = tracks[i]
+    number_i = track_i[0 : track_i.find(':')]
+    if number_i not in dict_tracks_0:
+        dict_tracks_0[number_i] = track_i[track_i.find(':') + 1: ]
+    else:
+        dict_tracks_0[number_i] += track_i[track_i.find(':') + 1: ]
+    dict_tracks_instruments[number_i] = instruments[i]
+
+#-----------------------------------
+
+dict_tracks = dict()
+
+for n_track in dict_tracks_0:
+    track = dict_tracks_0[n_track]
+    list_of_notes = track.split()
+    for i in range(len(list_of_notes)):
+        note_dur = list_of_notes[i].split('/')
+        if len(note_dur) == 1: # случай например если note_dur = ['r']
+            list_of_notes[i] = note_dur
+        else:
+            if len(note_dur[1]) == 0: # например если note_dur = ['r', '']
+                list_of_notes[i] = [note_dur[0]]
+            else:
+                list_of_notes[i] = note_dur
+    dict_tracks[n_track] = list_of_notes
+
+
+
+#-----------------------------------
+
+
 # tracks == List of all tracks
 #  track == every tracks is list
-track = []
-test = []
-keypresses = []
-for line in tracks:
-    note = line.split()
-    track.append(note)
-notes_short = np.delete(track[0], 0, 0)
-for play_note in notes_short:
-    keypresses.append(play_note.split('/'))
+
+# track = []
+# test = []
+# keypresses = []
+# for line in tracks:
+#     note = line.split()
+#     track.append(note)
+# notes_short = np.delete(track[0], 0, 0)
+# for play_note in notes_short:
+#     note_dur = play_note.split('/')
+#     if len(note_dur) == 1:
+#         keypresses.append(note_dur)
+#     else:
+#         if len(note_dur[1]) == 0:
+#             keypresses.append([note_dur[0]])
+#         else:
+#             keypresses.append(note_dur)
 
 # checker for the octave
+
+keypresses = dict_tracks['1']
+
 for i in range(len(keypresses)):
     actual_octave = '4'
+    actual_duration = 1.0
     if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
         keypresses[i][0] = keypresses[i][0] + actual_octave
     else:
         actual_octave = re.findall(r'\d', keypresses[i][0])
+    if len(keypresses[i]) == 1:
+        if i == 0:
+            keypresses[i].append(str(actual_duration))
+        else:
+            keypresses[i].append(keypresses[i-1][1])
 print(keypresses)
 
 running = 1
