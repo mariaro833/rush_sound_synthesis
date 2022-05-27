@@ -106,21 +106,23 @@ for n_track in dict_tracks_0:
 
 for key in dict_tracks:
     keypresses = dict_tracks[key]
-    print("keypresses: " + keypresses)
+    print(keypresses)
 
-actual_octave = '4'
-actual_duration = 1.0
-for i in range(len(keypresses)):
-    if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
-        keypresses[i][0] = keypresses[i][0] + actual_octave
-    elif not 'r' in keypresses[i][0]:
-        actual_octave1 = (re.findall(r'\d', keypresses[i][0]))
-        actual_octave = actual_octave1[0]
-    if len(keypresses[i]) == 1:
-        if i == 0:
-            keypresses[i].append(str(actual_duration))
-        else:
-            keypresses[i].append(keypresses[i-1][1])
+    actual_octave = '4'
+    actual_duration = 1.0
+    for i in range(len(keypresses)):
+        if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
+            dict_tracks[key][i][0] = keypresses[i][0] + actual_octave
+        elif not 'r' in keypresses[i][0]:
+            actual_octave1 = (re.findall(r'\d', keypresses[i][0]))
+            actual_octave = actual_octave1[0]
+        if len(keypresses[i]) == 1:
+            if i == 0:
+                keypresses[i].append(str(actual_duration))
+            else:
+                keypresses[i].append(keypresses[i-1][1])
+        dict_tracks[key][i][0] = dict_tracks[key][i][0].replace('c#', 'd').replace('g#', 'a').replace('ab', 'g').replace('bb', 'a#').replace('cb', 'b#').replace('db', 'c').replace('eb', 'd#').replace('fb', 'e#').replace('gb', 'e#')
+        print(dict_tracks[key][i][0])
 
 #-----------------------------------
 # running sound
