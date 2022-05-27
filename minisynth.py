@@ -104,24 +104,23 @@ for n_track in dict_tracks_0:
 #-----------------------------------
 # checker for the octave
 
-keypresses = dict_tracks['1']
+for key in dict_tracks:
+    keypresses = dict_tracks[key]
+    print("keypresses: " + keypresses)
 
 actual_octave = '4'
 actual_duration = 1.0
 for i in range(len(keypresses)):
     if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
         keypresses[i][0] = keypresses[i][0] + actual_octave
-        print("keypresses" + keypresses[i][0])
     elif not 'r' in keypresses[i][0]:
         actual_octave1 = (re.findall(r'\d', keypresses[i][0]))
         actual_octave = actual_octave1[0]
-    print("actual_octave: " + actual_octave)
     if len(keypresses[i]) == 1:
         if i == 0:
             keypresses[i].append(str(actual_duration))
         else:
             keypresses[i].append(keypresses[i-1][1])
-print(keypresses)
 
 #-----------------------------------
 # running sound
