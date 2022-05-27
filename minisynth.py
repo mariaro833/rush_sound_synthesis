@@ -106,13 +106,16 @@ for n_track in dict_tracks_0:
 
 keypresses = dict_tracks['1']
 
+actual_octave = '4'
+actual_duration = 1.0
 for i in range(len(keypresses)):
-    actual_octave = '4'
-    actual_duration = 1.0
     if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
         keypresses[i][0] = keypresses[i][0] + actual_octave
-    else:
-        actual_octave = re.findall(r'\d', keypresses[i][0])
+        print("keypresses" + keypresses[i][0])
+    elif not 'r' in keypresses[i][0]:
+        actual_octave1 = (re.findall(r'\d', keypresses[i][0]))
+        actual_octave = actual_octave1[0]
+    print("actual_octave: " + actual_octave)
     if len(keypresses[i]) == 1:
         if i == 0:
             keypresses[i].append(str(actual_duration))
@@ -133,10 +136,26 @@ for i in range(len(keypresses)):
     key = keypresses[i][0]
     print("key: ")
     print(key)
-    
+
+    # if 'c#' in notes[key][1]:
+    #     notes[key][1] = 'd'
+    # if 'g#' in notes[key][1]:
+    #     notes[key][1] = 'a'
+    #     keypresses[i][1] += 1
+    # if 'ab' in notes[key][1]:
+    #     notes[key][1] = 'g'
+    #     keypresses[i][1] -= 1
+    # if 'c#' in notes[key][1]:
+    # if 'c#' in notes[key][1]:
+    # if 'c#' in notes[key][1]:
+    # if 'c#' in notes[key][1]:
+    # if 'c#' in notes[key][1]:
+
+
     #-----------------------------------
     # checker for silent 'r'
-    if not 'r' in keypresses[i][0]:
+    if not 'r' in key:
+        # if re.findall(r'\d', key)[0] > 0
         notes[key][1].play()
     pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
     notes[key][1].fadeout(0)
