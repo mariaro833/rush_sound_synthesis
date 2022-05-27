@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 import sys
 import array as arr
+import re
 
 def synth(frequency, duration=3, sampling_rate=44100):
     frames = int(duration*sampling_rate)
@@ -35,10 +36,6 @@ for i in range(len(noteslist)):
 
     notes[key] = [freq, sample]
     notes[key][1].set_volume(0.33)
-    # to add a silence
-    # if 'r' in key:
-    #     freq = 24
-    # else:
     freq = freq * 2 ** (1/12)
 
 # open and parse a file
@@ -68,6 +65,14 @@ for line in tracks:
 notes_short = np.delete(track[0], 0, 0)
 for play_note in notes_short:
     keypresses.append(play_note.split('/'))
+
+# checker for the octave
+for i in range(len(keypresses)):
+    actual_octave = '4'
+    if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
+        keypresses[i][0] = keypresses[i][0] + actual_octave
+    else:
+        actual_octave = re.findall(r'\d', keypresses[i][0])
 print(keypresses)
 
 running = 1
@@ -80,14 +85,11 @@ for i in range(len(keypresses)):
     key = keypresses[i][0]
     print("key: ")
     print(key)
-    if 'r' in keypresses[i][0]:
-        pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
-        notes[key][1].fadeout(0)
-    else:
+    # checker for silent 'r'
+    if not 'r' in keypresses[i][0]:
         notes[key][1].play()
-        pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
-    # print(int((60000 * float(keypresses[i][1])) / tempo[0]))
-        notes[key][1].fadeout(0)
+    pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
+    notes[key][1].fadeout(0)
 
 pg.time.wait(500)
 pg.quit()

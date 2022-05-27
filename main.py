@@ -2,6 +2,7 @@ from curses.ascii import isdigit
 import sys
 import array as arr
 import numpy as np
+import re
 
 if len(sys.argv) > 2 or len(sys.argv) == 1:
 	print("Usage: ./minsynth <filename>")
@@ -32,10 +33,14 @@ for line in tracks:
 notes_short = np.delete(track[0], 0, 0)
 for play_note in notes_short:
     keypresses.append(play_note.split('/'))
+
+for i in range(len(keypresses)):
+    actual_octave = '4'
+    if not re.findall(r'\d', keypresses[i][0]) and not 'r' in keypresses[i][0]:
+        keypresses[i][0] = keypresses[i][0] + actual_octave
+    else:
+        actual_octave = re.findall(r'\d', keypresses[i][0])
+
     # duration = float(keypresses[1])
-print("keypresses: ")
 print(keypresses)
-# print("duration: ")
-# print(duration)
-print("track: ")
-print(track)
+

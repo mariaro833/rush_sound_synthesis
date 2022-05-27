@@ -6,6 +6,6 @@ tracks saw,sine,sine,triangle,triangle,triangle,triangle,triangle,triangle,trian
 
 # Track 1: channel 0 (Trumpet), 1 voices
 
-1: a5/2.0625 g5/0.5625 a5/0.4125 r/0.6145 a5/0.3958
+1: a5/2.0625 g/0.5625 a5/0.4125 r/0.6145 a/0.3958
 
 2: r/58.052 c#7/0.85 r/0.1812 e6/0.7041
