@@ -3,11 +3,17 @@ import numpy as np
 import sys
 import array as arr
 import re
+import threading
+import time
+import asyncio
+from multiprocessing import Pool
+from multiprocessing import Process
+import random
 
 #-----------------------------------
 # sample generater
 
-def synth(frequency, duration=3, sampling_rate=44100):
+def synth(frequency, duration=1, sampling_rate=44100):
     frames = int(duration * sampling_rate)
     arr = np.cos(2 * np.pi * frequency * np.linspace(0, duration, frames)) #sine
     # arr = arr + np.cos(4*np.pi*frequency*np.linspace(0, duration, frames)) # organ like
@@ -15,11 +21,31 @@ def synth(frequency, duration=3, sampling_rate=44100):
 ##    arr = np.clip(arr*10, -1, 1) # square
 ##    arr = np.cumsum(np.clip(arr*10, -1, 1)) # saw
 ##    arr = arr+np.sin(2*np.pi*frequency*np.linspace(0,duration, frames)) # triangle_nice
-    arr = arr/max(np.abs(arr)) # triangle
-    sound = np.asarray([32767 * arr,32767 * arr]).T.astype(np.int16)
-    sound = pg.sndarray.make_sound(sound.copy())
+    arr1 = arr/max(np.abs(arr)) # triangle
 
-    return sound
+    sound1 = np.asarray([32767 * arr,32767 * arr1]).T.astype(np.int16)
+    sound1 = pg.sndarray.make_sound(sound1.copy())
+
+    arr2 = np.clip(arr*10, -1, 1) # square
+    arr2 = arr/max(np.abs(arr2)) # triangle
+
+    sound2 = np.asarray([32767 * arr,32767 * arr2]).T.astype(np.int16)
+    sound2 = pg.sndarray.make_sound(sound2.copy())
+
+    arr3 = np.cumsum(np.clip(arr*10, -1, 1)) # saw
+    arr3 = arr/max(np.abs(arr3)) # triangle
+
+    sound3 = np.asarray([32767 * arr,32767 * arr3]).T.astype(np.int16)
+    sound3 = pg.sndarray.make_sound(sound3.copy())
+
+    arr4 = arr+np.sin(2*np.pi*frequency*np.linspace(0,duration, frames)) # triangle_nice
+    arr4 = arr/max(np.abs(arr4)) # triangle
+
+    sound4 = np.asarray([32767 * arr,32767 * arr4]).T.astype(np.int16)
+    sound4 = pg.sndarray.make_sound(sound4.copy())
+
+
+    return [sound1, sound2, sound3, sound4]
 
 #-----------------------------------
 # save the notelist into a wave
@@ -41,7 +67,10 @@ for i in range(len(noteslist)):
     instrument = {}
 
     notes[key] = [freq, sample]
-    notes[key][1].set_volume(0.33)
+    notes[key][1][0].set_volume(0.33)
+    notes[key][1][1].set_volume(0.33)
+    notes[key][1][2].set_volume(0.33)
+    notes[key][1][3].set_volume(0.33)
     freq = freq * 2 ** (1/12)
 
 #-----------------------------------
@@ -106,7 +135,7 @@ for n_track in dict_tracks_0:
 
 for key in dict_tracks:
     keypresses = dict_tracks[key]
-    print(keypresses)
+    # print(keypresses)
 
     actual_octave = '4'
     actual_duration = 1.0
@@ -122,44 +151,77 @@ for key in dict_tracks:
             else:
                 keypresses[i].append(keypresses[i-1][1])
         dict_tracks[key][i][0] = dict_tracks[key][i][0].replace('c#', 'd').replace('g#', 'a').replace('ab', 'g').replace('bb', 'a#').replace('cb', 'b#').replace('db', 'c').replace('eb', 'd#').replace('fb', 'e#').replace('gb', 'e#')
-        print(dict_tracks[key][i][0])
+        # print(dict_tracks[key][i][0])
 
 #-----------------------------------
 # running sound
 
-running = 1
-for i in range(len(keypresses)):
-    if not running:
-        break
-    for event in pg.event.get():
-        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-            running = False
-    key = keypresses[i][0]
-    print("key: ")
-    print(key)
-
-    # if 'c#' in notes[key][1]:
-    #     notes[key][1] = 'd'
-    # if 'g#' in notes[key][1]:
-    #     notes[key][1] = 'a'
-    #     keypresses[i][1] += 1
-    # if 'ab' in notes[key][1]:
-    #     notes[key][1] = 'g'
-    #     keypresses[i][1] -= 1
-    # if 'c#' in notes[key][1]:
-    # if 'c#' in notes[key][1]:
-    # if 'c#' in notes[key][1]:
-    # if 'c#' in notes[key][1]:
-    # if 'c#' in notes[key][1]:
-
-
+def play_(keypresses_, instruments_):
+    instrument = instruments_
+    print(keypresses_)
+    running = 1
+    for i in range(len(keypresses_)):
+        # if not running:
+        #     break
+        # for event in pg.event.get():
+        #     if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+        #         running = False
+        key = keypresses_[i][0]
     #-----------------------------------
     # checker for silent 'r'
-    if not 'r' in key:
-        # if re.findall(r'\d', key)[0] > 0
-        notes[key][1].play()
-    pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
-    notes[key][1].fadeout(0)
+        print(key)
+        if not 'r' in key:
+            print("play")
+            notes[key][1][instrument].play()
+            print("play1")
+
+        pg.time.wait(int((60000 * float(keypresses_[i][1])) / tempo[0]))
+        print("play2")
+        # notes[key][1][instrument].fadeout(0)
+        print("play3")
+
+
+# processes = []
+
+# def start():
+#     for key in dict_tracks:
+#         p = Process(target=play_, args=(dict_tracks[key], int(dict_tracks_instruments[key].replace('sine', '1').replace('square', '2').replace('saw', '3').replace('triangle', '4'))))
+#         p.start()
+#     for p in processes:
+#         p.join()
+
+# if __name__ == "__main__":
+#     start()
+
+# for key in dict_tracks:
+#     play_(dict_tracks[key], 1)
+
+def play__():
+    print("что-")
+    play_(dict_tracks['1'], 1)
+    # for key in dict_tracks:
+# t = threading.Thread(target=play__)
+# t.start()
+processes = []
+
+def start():
+    for i in str(dict_tracks['1']):
+        p = Process(target = [play__])
+        p.start()
+        processes.append(p)
+
+    for p in processes:
+        p.join()
+
+if __name__ == '__main__':
+    start()
+
+# t1 = threading.Thread(target=play_, args=(dict_tracks['2'], 1))
+# t1.start()
+
+
+#     for key in dict_tracks:
+#         play_(dict_tracks[key], int(dict_tracks_instruments[key].replace('sine', '1').replace('square', '2').replace('saw', '3').replace('triangle', '4')))
 
 pg.time.wait(500)
 pg.quit()
