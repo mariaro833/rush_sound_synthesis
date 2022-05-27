@@ -35,11 +35,11 @@ for i in range(len(noteslist)):
 
     notes[key] = [freq, sample]
     notes[key][1].set_volume(0.33)
-    # tryineg to add a silence
-    if 'r' in key:
-        freq = 24
-    else:
-        freq = freq * 2 ** (1/12)
+    # to add a silence
+    # if 'r' in key:
+    #     freq = 24
+    # else:
+    freq = freq * 2 ** (1/12)
 
 # open and parse a file
 if len(sys.argv) > 2 or len(sys.argv) == 1:
@@ -80,12 +80,14 @@ for i in range(len(keypresses)):
     key = keypresses[i][0]
     print("key: ")
     print(key)
-    # if 'r' in keypresses[i][0]:
-    #     notes[key][0] = 0
-    notes[key][1].play()
-    pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
+    if 'r' in keypresses[i][0]:
+        pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
+        notes[key][1].fadeout(0)
+    else:
+        notes[key][1].play()
+        pg.time.wait(int((60000 * float(keypresses[i][1])) / tempo[0]))
     # print(int((60000 * float(keypresses[i][1])) / tempo[0]))
-    notes[key][1].fadeout(0)
+        notes[key][1].fadeout(0)
 
 pg.time.wait(500)
 pg.quit()
